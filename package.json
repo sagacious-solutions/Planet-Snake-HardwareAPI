@@ -1,0 +1,25 @@
+{
+  "name": "snekBeta",
+  "version": "0.0.9",
+  "description": "Its a snek thing that started from a boiler plate im tearing out",
+  "author": "me",
+  "main": "index.js",
+  "engines": {
+    "node": "10.24.1",
+    "npm": ">=5.6.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha ./**/test/*test.js"
+  },
+  "keywords": [
+    "Snake",
+    "Eco System"
+  ],
+  "dependencies": {
+    "ds18b20-raspi": "0.3.6",
+    "i2c-bus": "^5.2.2",
+    "onoff": "6.0.3",
+    "raspberrypi-liquid-crystal": "^1.15.0"
+  }
+}
