@@ -1,4 +1,6 @@
-<h1> Planet Snake </h1>
+<h1> Planet Snake Research Vivarium</h1>
+
+<img alt="" src="./documentation/photos/snakeJazz.png" />
 
 <img alt="" src="./documentation/photos/planet_snake.jpg" />
 
