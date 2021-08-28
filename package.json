@@ -17,7 +17,9 @@
     "Eco System"
   ],
   "dependencies": {
+    "dotenv": "^10.0.0",
     "ds18b20-raspi": "0.3.6",
+    "express": "^4.17.1",
     "i2c-bus": "^5.2.2",
     "onoff": "6.0.3",
     "raspberrypi-liquid-crystal": "^1.15.0"
