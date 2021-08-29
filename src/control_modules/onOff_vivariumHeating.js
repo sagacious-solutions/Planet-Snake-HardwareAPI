@@ -134,13 +134,14 @@ module.exports = (
 
   ///// FOR MAPPING PORTS
   process.on("SIGINT", (_) => {
-    for (let thisSocket of pwrBarSocket) {
-      console.log("THIS RAN!!!");
-      thisSocket.writeSync(1);
-      thisSocket.unexport();
+    if (pwrBarSocket) {
+      for (let thisSocket of pwrBarSocket) {
+        console.log("THIS RAN!!!");
+        thisSocket.writeSync(1);
+        thisSocket.unexport();
+      }
     }
-
-    setTimeout(() => process.exit(0), 5000);
+    setTimeout(() => process.exit(0), 1000);
   });
 
   return {
