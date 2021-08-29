@@ -124,12 +124,6 @@ module.exports = (
 
     return "NO DATA";
   };
-  // const getZone = () => {
-  //   return zone;
-  // };
-  // const getTarget = () => {
-  //   return targetTemp;
-  // };
 
   // Primarily Used for trouble shooting
   const setSockets = (onOff) => {
