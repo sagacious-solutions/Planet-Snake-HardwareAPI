@@ -15,7 +15,6 @@ const targetBaskingTemp = 35;
 const lcd = require("./display/lcd");
 const lcd_add = 0x27;
 const lcd_display = lcd(lcd_add);
-const lcd_display = null;
 
 const basking = heatingControl(
   [6],
