@@ -3,6 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = process.env.PORT;
+const cors = require('cors')
+
 
 //console.log(process.env.PORT)
 
@@ -21,11 +23,19 @@ const seconds = 1000;
 
 // CHANGE LOGIC TO REDUCE HEATING TO 25c AT NIGHT
 
-app.get("/baskingCurrent", (req, res) => {
-  res.send(basking.currentTemp);
+app.get("/current", cors(), (req, res) => {
+  const currentReadings = {
+    "basking": basking.currentTemp,
+    "hide": hide.currentTemp,
+    "cool": cool.currentTemp
+  }
+
+  console.log("request made for current readings")
+  res.json(currentReadings);
+  // res.send(basking.currentTemp);
 });
-app.get("/baskingTarget", (req, res) => {
-  res.send(basking.targetTemp);
+app.get("/baskingTarget", cors(),(req, res) => {
+  res.status(200).send(basking.targetTemp);
 });
 
 app.listen(port, () => {
