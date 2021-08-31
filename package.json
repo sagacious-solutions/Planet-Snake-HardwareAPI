@@ -17,6 +17,7 @@
     "Eco System"
   ],
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "ds18b20-raspi": "0.3.6",
     "express": "^4.17.1",
