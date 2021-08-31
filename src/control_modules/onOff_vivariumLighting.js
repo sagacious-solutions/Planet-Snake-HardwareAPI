@@ -1,10 +1,10 @@
 const time = require("../helpers/rtc");
 let Gpio = require("onoff").Gpio; //include onoff to interact with the GPIO
 
-let snekNightLight = new Gpio(5, "out");
-let plantDayLED = new Gpio(6, "out");
-let plantRedLED = new Gpio(13, "out");
-let snekUVB = new Gpio(26, "out");
+let snekNightLight = new Gpio(13, "out");
+let plantDayLEDS = new Gpio(6, "out");
+// let plantRedLED = new Gpio(6, "out");
+let snekUVB = new Gpio(5, "out");
 
 // Relays Switch turn on when current sinks
 const ON = 0;
@@ -25,23 +25,20 @@ module.exports = () => {
   // Test use only
   function init() {
     snekNightLight.writeSync(OFF);
-    plantDayLED.writeSync(OFF);
-    plantRedLED.writeSync(OFF);
+    plantDayLEDS.writeSync(OFF);
     snekUVB.writeSync(OFF);
   }
 
   function initDay() {
     snekNightLight.writeSync(OFF);
-    plantDayLED.writeSync(ON);
-    plantRedLED.writeSync(ON);
+    plantDayLEDS.writeSync(ON);
     snekUVB.writeSync(ON);
     lightStateIsDay = true;
   }
 
   function initNight() {
     snekNightLight.writeSync(ON);
-    plantDayLED.writeSync(OFF);
-    plantRedLED.writeSync(OFF);
+    plantDayLEDS.writeSync(OFF);
     snekUVB.writeSync(OFF);
     lightStateIsDay = false;
   }
@@ -66,7 +63,18 @@ module.exports = () => {
     }
   };
 
+  process.on("SIGINT", (_) => {
+    snekNightLight.writeSync(1);
+    plantDayLEDS.writeSync(1);
+    snekUVB.writeSync(1);
+    snekNightLight.unexport();
+    plantDayLEDS.unexport();
+    snekUVB.unexport();
+    setTimeout(() => process.exit(0), 1000);
+  });
+
   initDay();
   checkDayNight();
   setInterval(checkDayNight, 60000);
+  return { initDay, initNight };
 };

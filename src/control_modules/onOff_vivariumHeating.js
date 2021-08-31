@@ -29,7 +29,7 @@ module.exports = (
 ) => {
   //////////////// START OF MODULE CODE
   // Socket pin associations [ 0, 1, 2, 3, 4, 5, 6]
-  const physicalSockets = [null, 24, 23, null, 22, 27, 17];
+  const physicalSockets = [null, 23, 24, null, 22, 27, 17];
   let pwrBarSocket = [];
   let heating = null;
   let timeOn = null;
@@ -71,7 +71,7 @@ module.exports = (
   const setHeating = () => {
     for (let thisSocket of pwrBarSocket) {
       if (currentTemp < targetTemp) {
-        thisSocket.writeSync(1);
+        thisSocket.writeSync(ON);
         console.log(`${zone} Turned on`);
         timeOn = Date.now();
         heating = true;
@@ -80,7 +80,7 @@ module.exports = (
 
     for (let thisSocket of pwrBarSocket) {
       if (currentTemp > targetTemp) {
-        thisSocket.writeSync(0);
+        thisSocket.writeSync(OFF);
         console.log(`${zone} Turned off`);
         timeOff = Date.now();
         heating = false;
@@ -124,12 +124,6 @@ module.exports = (
 
     return "NO DATA";
   };
-  // const getZone = () => {
-  //   return zone;
-  // };
-  // const getTarget = () => {
-  //   return targetTemp;
-  // };
 
   // Primarily Used for trouble shooting
   const setSockets = (onOff) => {
@@ -138,14 +132,17 @@ module.exports = (
     }
   };
 
-  ///////////////////////////////////////////////////////////
-  // FREE RESOURCES ON STOP!!!!!!!!!!!!!!!
-  // process.on("SIGINT", function () {
-  //   console.log("Freeing up GPIO");
-  //   for (let thisSocket of pwrBarSocket) {
-  //     thisSocket.unexport();
-  //   }
-  // });
+  ///// FOR MAPPING PORTS
+  process.on("SIGINT", (_) => {
+    if (pwrBarSocket) {
+      for (let thisSocket of pwrBarSocket) {
+        console.log("THIS RAN!!!");
+        thisSocket.writeSync(1);
+        thisSocket.unexport();
+      }
+    }
+    setTimeout(() => process.exit(0), 1000);
+  });
 
   return {
     getTemp,
