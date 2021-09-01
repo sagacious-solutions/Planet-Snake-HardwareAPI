@@ -51,15 +51,31 @@ module.exports = () => {
     return false;
   };
 
+  // Switches from day to night based on if its the tanks set day time or not
   const checkDayNight = () => {
     // if its day and the lights are not set to day
     if (checkDay() && !lightStateIsDay) {
       initDay();
-      return;
+      return true;
     }
     // if its not day but the lights are set to day
     if (!checkDay() && lightStateIsDay) {
       initNight();
+      return false;
+    }
+  };
+
+  // Switches from day to night reguardless of current state
+  const toggleDayNight = () => {
+    // if its day and the lights are not set to day
+    if (!lightStateIsDay) {
+      initDay();
+      return true;
+    }
+    // if its not day but the lights are set to day
+    if (lightStateIsDay) {
+      initNight();
+      return false;
     }
   };
 
@@ -76,5 +92,5 @@ module.exports = () => {
   initDay();
   checkDayNight();
   setInterval(checkDayNight, 60000);
-  return { initDay, initNight };
+  return { initDay, initNight, toggleDayNight };
 };
