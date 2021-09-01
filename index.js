@@ -3,8 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = process.env.PORT;
-const cors = require('cors')
-
+const cors = require("cors");
 
 //console.log(process.env.PORT)
 
@@ -16,26 +15,51 @@ const cors = require('cors')
 const refreshRate = 10000; // In milliseconds
 const dbSaveInterval = 3; // In minutes
 const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
-const lightCycle = lightingControl();
+const { toggleDayNight } = lightingControl();
 const { basking, hide, cool } = require("./src/heating_configuration");
 
+const { readSensorData } = require("./src/sensors/sht30index");
+
 const seconds = 1000;
+
+// setInterval(readSensorData, 15000)
 
 // CHANGE LOGIC TO REDUCE HEATING TO 25c AT NIGHT
 
 app.get("/current", cors(), (req, res) => {
   const currentReadings = {
-    "basking": basking.currentTemp,
-    "hide": hide.currentTemp,
-    "cool": cool.currentTemp
-  }
+    baskingCurrent: basking.currentTemp,
+    hideCurrent: hide.currentTemp,
+    coolCurrent: cool.currentTemp,
+  };
 
-  console.log("request made for current readings")
+  console.log("request made for current readings");
   res.json(currentReadings);
   // res.send(basking.currentTemp);
 });
-app.get("/baskingTarget", cors(),(req, res) => {
-  res.status(200).send(basking.targetTemp);
+
+app.get("/targetconfig", cors(), (req, res) => {
+  const targetConfig = {
+    baskingCurrent: basking.targetTemp,
+    hideCurrent: hide.targetTemp,
+  };
+
+  res.json(targetConfig);
+});
+
+app.put("/targetconfig", cors(), (req, res) => {
+  console.log("Someone is trying to update the target config");
+  console.log(req);
+});
+
+// // increase basking temps
+// app.get("/baskingtargetup", cors(), (req, res) => {
+//   res.status(200).send(basking.targetTemp);
+// });
+
+app.get("/toggledaynight", cors(), (req, res) => {
+  console.log("Toggle Day Night Ran command from server");
+  res.status(200).send(toggleDayNight());
 });
 
 app.listen(port, () => {
