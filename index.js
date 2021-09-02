@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT;
 const cors = require("cors");
+const seconds = 1000;
 
 //console.log(process.env.PORT)
 
@@ -18,11 +19,8 @@ const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
 const { toggleDayNight } = lightingControl();
 const { basking, hide, cool } = require("./src/heating_configuration");
 
-const { readSensorData } = require("./src/sensors/sht30index");
-
-const seconds = 1000;
-
-// setInterval(readSensorData, 15000)
+const humidityModule = require("./src/sensors/sht30index");
+const humiditySensor = humidityModule(60 * seconds);
 
 // CHANGE LOGIC TO REDUCE HEATING TO 25c AT NIGHT
 
@@ -31,6 +29,7 @@ app.get("/current", cors(), (req, res) => {
     baskingCurrent: basking.currentTemp,
     hideCurrent: hide.currentTemp,
     coolCurrent: cool.currentTemp,
+    humidityCurrent: humiditySensor.currentHumidity,
   };
 
   console.log("request made for current readings");
