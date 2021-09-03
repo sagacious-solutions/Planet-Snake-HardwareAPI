@@ -1,6 +1,15 @@
 const SHT31 = require("./sht31");
 
-module.exports = () => {
+const seconds = 1000;
+
+const getHumidity = () => {
+  return currentHumidity;
+};
+
+module.exports = (readingInterval = seconds * 15) => {
+  console.log("Humidity Module Exported");
+  let currentHumidity = "DEFAULT";
+
   // The SHT31 constructor options are optional.
   //
   const options = {
@@ -16,21 +25,16 @@ module.exports = () => {
     sht31
       .readSensorData()
       .then((data) => {
-        // temperature_C and humidity are returned by default.
-        // I'll also calculate some unit conversions for display purposes.
-        //
-        data.temperature_F = SHT31.convertCelciusToFahrenheit(
-          data.temperature_C
-        );
+        // currentHumidity = parseFloat(data.humidity).toPrecision(4);
 
-        console.log(
-          `The current temperature is ${data.temperature_C} degrees celsius`
-        );
-        console.log(`The current humidity is ${data.humidity} degrees celsius`);
+        // console.log(currentHumidity);
+
+        return parseFloat(data.humidity).toPrecision(4);
       })
       .catch((err) => {
         console.log(`SHT31 read error: ${err}`);
-        setTimeout(readSensorData, 2000);
+
+        return null;
       });
   };
 
@@ -40,9 +44,11 @@ module.exports = () => {
     .init()
     .then(() => {
       console.log("SHT31 initialization succeeded");
-      readSensorData();
+      currentHumidity = readSensorData();
     })
     .catch((err) => console.error(`SHT31 initialization failed: ${err} `));
 
-  return {readSensorData};
+  return { readSensorData, currentHumidity };
 };
+
+// module.exports = { getHumidity };

@@ -20,7 +20,17 @@ const { toggleDayNight } = lightingControl();
 const { basking, hide, cool } = require("./src/heating_configuration");
 
 const humidityModule = require("./src/sensors/sht30index");
-const humiditySensor = humidityModule(60 * seconds);
+const { readSensorData, currentHumidity } = humidityModule(60 * seconds);
+
+// setInterval(updateHumidity, 5000);
+
+// let humidity = "non init";
+
+// const updateHumidity = () => {
+//   humidity = readSensorData();
+//   console.log("Humidity is ");
+//   console.log(humidity);
+// };
 
 // CHANGE LOGIC TO REDUCE HEATING TO 25c AT NIGHT
 
@@ -29,10 +39,11 @@ app.get("/current", cors(), (req, res) => {
     baskingCurrent: basking.currentTemp,
     hideCurrent: hide.currentTemp,
     coolCurrent: cool.currentTemp,
-    humidityCurrent: humiditySensor.currentHumidity,
+    // humidityCurrent: getHumidity,
   };
 
   console.log("request made for current readings");
+  console.log(currentReadings);
   res.json(currentReadings);
   // res.send(basking.currentTemp);
 });
