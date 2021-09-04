@@ -1,4 +1,4 @@
-const SHT31 = require("./sht31");
+const SHT31 = require("./sht31_sensorLibrary");
 
 const seconds = 1000;
 
@@ -6,7 +6,11 @@ const getHumidity = () => {
   return currentHumidity;
 };
 
-module.exports = (readingInterval = seconds * 15) => {
+module.exports = (
+  readingInterval = seconds * 15,
+  lcd_display,
+  lcd_line = 3
+) => {
   console.log("Humidity Module Exported");
   let currentHumidity = "DEFAULT";
 
@@ -22,15 +26,9 @@ module.exports = (readingInterval = seconds * 15) => {
   // Read SHT31 sensor data, repeat
   //
   const readSensorData = () => {
-    sht31
+    return sht31
       .readSensorData()
-      .then((data) => {
-        // currentHumidity = parseFloat(data.humidity).toPrecision(4);
 
-        // console.log(currentHumidity);
-
-        return parseFloat(data.humidity).toPrecision(4);
-      })
       .catch((err) => {
         console.log(`SHT31 read error: ${err}`);
 
@@ -44,7 +42,6 @@ module.exports = (readingInterval = seconds * 15) => {
     .init()
     .then(() => {
       console.log("SHT31 initialization succeeded");
-      currentHumidity = readSensorData();
     })
     .catch((err) => console.error(`SHT31 initialization failed: ${err} `));
 
