@@ -1,5 +1,6 @@
 const ds18b20 = require("./sensors/ds18b20");
 const heatingControl = require("./control_modules/onOff_vivariumHeating");
+const humidityControl = require("./control_modules/onOff_vivariumHumidity");
 
 const hideSensor = "28-0000058f5428";
 const baskingSensor = "28-041464652fff";
@@ -15,6 +16,12 @@ const targetBaskingTemp = 35;
 const lcd = require("./display/lcd");
 const lcd_add = 0x27;
 const lcd_display = lcd(lcd_add);
+const seconds = 1000;
+
+const humidityModule = require("./sensors/sht31_sensorControl");
+const humiditySensor = humidityModule(60 * seconds, lcd_display, 3);
+
+const mister = humidityControl([1], humiditySensor, 65, lcd_display, 3);
 
 const basking = heatingControl(
   [6],
@@ -46,4 +53,4 @@ const cool = heatingControl(
   2
 );
 
-module.exports = { basking, hide, cool };
+module.exports = { basking, hide, cool, mister };
