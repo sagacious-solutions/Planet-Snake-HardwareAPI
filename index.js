@@ -17,10 +17,7 @@ const refreshRate = 10000; // In milliseconds
 const dbSaveInterval = 3; // In minutes
 const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
 const { toggleDayNight } = lightingControl();
-const { basking, hide, cool } = require("./src/heating_configuration");
-
-const humidityModule = require("./src/sensors/sht30index");
-const { readSensorData, currentHumidity } = humidityModule(60 * seconds);
+const { basking, hide, cool, mister } = require("./src/heating_configuration");
 
 // setInterval(updateHumidity, 5000);
 
@@ -70,6 +67,12 @@ app.put("/targetconfig", cors(), (req, res) => {
 app.get("/toggledaynight", cors(), (req, res) => {
   console.log("Toggle Day Night Ran command from server");
   res.status(200).send(toggleDayNight());
+});
+app.get("/spookymode", cors(), (req, res) => {
+  console.log("spookymode Ran command from server");
+  toggleDayNight();
+  mister.toggleHumidity();
+  res.status(200).send();
 });
 
 app.listen(port, () => {
