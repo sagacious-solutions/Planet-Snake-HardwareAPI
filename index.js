@@ -70,8 +70,9 @@ app.get("/toggledaynight", cors(), (req, res) => {
 });
 app.get("/spookymode", cors(), (req, res) => {
   console.log("spookymode Ran command from server");
-  toggleDayNight();
+  // toggleDayNight();
   mister.toggleHumidity();
+  setTimeout(mister.toggleHumidity, 5 * seconds);
   res.status(200).send();
 });
 

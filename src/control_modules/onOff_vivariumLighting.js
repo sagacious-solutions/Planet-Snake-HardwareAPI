@@ -6,6 +6,10 @@ let plantDayLEDS = new Gpio(6, "out");
 // let plantRedLED = new Gpio(6, "out");
 let snekUVB = new Gpio(5, "out");
 
+const seconds = 1000;
+const minutes = seconds * 60;
+const hour = minutes * 60;
+
 // Relays Switch turn on when current sinks
 const ON = 0;
 const OFF = 1;
@@ -89,8 +93,16 @@ module.exports = () => {
     setTimeout(() => process.exit(0), 1000);
   });
 
+  // This fetches how long it is to the next even hour EX : 2:00pm or 7:00am
+  const timeToAnHour = (60 - rtc.time().minutes) * minutes;
+
+  // Waits until the next even hour, then sets an interval for
+  // once an hour to check if its time to cycle between night and day
+  setTimeout(() => {
+    setInterval(checkDayNight, 1 * hour);
+  }, timeToAnHour);
+
   initDay();
   checkDayNight();
-  setInterval(checkDayNight, 60000);
   return { initDay, initNight, toggleDayNight };
 };
