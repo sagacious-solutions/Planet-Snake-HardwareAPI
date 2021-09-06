@@ -31,6 +31,7 @@ module.exports = (storing = false, h = 0, m = 0, s = 0) => {
 
   const amPM = () => (pm ? "PM" : "AM");
 
+  // returns the current time
   const time = () => {
     return { hours, minutes, seconds };
   };
@@ -67,10 +68,3 @@ module.exports = (storing = false, h = 0, m = 0, s = 0) => {
     isBetween,
   };
 };
-///////////////////////////////
-
-// const closureTime = require("./time");
-// const rtc = closureTime();
-// const morning = closureTime(true, 7);
-// rtc.toConsole(true);
-// morning.toConsole();
