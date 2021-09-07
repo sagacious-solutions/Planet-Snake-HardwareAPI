@@ -34,7 +34,7 @@ module.exports = (
   let timeOn = null;
   let timeOff = null;
   let swing = 0;
-  let currentHumidity = 0;
+  let objectValue = { currentHumidity: 0 };
 
   const initialize = () => {
     if (socketInput) {
@@ -94,8 +94,8 @@ module.exports = (
 
     sensor.readSensorData().then((data) => {
       displayToLcd(data);
-      currentHumidity = parseFloat(data.humidity).toPrecision(4);
-      console.log(data);
+      objectValue.currentHumidity = parseFloat(data.humidity).toPrecision(4);
+      console.log(objectValue.currentHumidity);
     });
 
     // currentHumidity = parseFloat(data.humidity).toPrecision(4);
@@ -143,5 +143,5 @@ module.exports = (
     setTimeout(() => process.exit(0), 1000);
   });
 
-  return { toggleHumidity };
+  return { toggleHumidity, objectValue };
 };

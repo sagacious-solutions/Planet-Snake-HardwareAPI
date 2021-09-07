@@ -18,7 +18,7 @@ const dbSaveInterval = 3; // In minutes
 const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
 const { toggleDayNight } = lightingControl();
 const { basking, hide, cool, mister } = require("./src/heating_configuration");
-
+let isSpooky = false;
 // setInterval(updateHumidity, 5000);
 
 // let humidity = "non init";
@@ -36,7 +36,8 @@ app.get("/current", cors(), (req, res) => {
     baskingCurrent: basking.currentTemp,
     hideCurrent: hide.currentTemp,
     coolCurrent: cool.currentTemp,
-    // humidityCurrent: getHumidity,
+    humidityCurrent: mister.objectValue.currentHumidity,
+    isSpooky: isSpooky,
   };
 
   console.log("request made for current readings");
@@ -64,16 +65,28 @@ app.put("/targetconfig", cors(), (req, res) => {
 //   res.status(200).send(basking.targetTemp);
 // });
 
+const unspookify = () => {
+  // mister.toggleHumidity();
+  // toggleDayNight();
+  isSpooky = false;
+};
+
 app.get("/toggledaynight", cors(), (req, res) => {
   console.log("Toggle Day Night Ran command from server");
   res.status(200).send(toggleDayNight());
 });
 app.get("/spookymode", cors(), (req, res) => {
   console.log("spookymode Ran command from server");
+  isSpooky = true;
   // toggleDayNight();
-  mister.toggleHumidity();
-  setTimeout(mister.toggleHumidity, 5 * seconds);
+  // mister.toggleHumidity();
+  setTimeout(unspookify, 10 * seconds);
+
   res.status(200).send();
+
+  // app.put("/spookymode", cors(), (req, res) => {
+  //   res.json({ spookyMode: true });
+  // });
 });
 
 app.listen(port, () => {
