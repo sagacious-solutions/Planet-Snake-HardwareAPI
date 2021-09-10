@@ -21,7 +21,14 @@ const seconds = 1000;
 const humidityModule = require("./sensors/sht31_sensorControl");
 const humiditySensor = humidityModule(60 * seconds, lcd_display, 3);
 
-const mister = humidityControl([1], humiditySensor, 65, lcd_display, 3);
+const mister = humidityControl(
+  [1],
+  humiditySensor,
+  65,
+  lcd_display,
+  3,
+  5 * seconds
+);
 
 const basking = heatingControl(
   [6],
@@ -30,7 +37,8 @@ const basking = heatingControl(
   "Basking",
   temperatureSensors,
   lcd_display,
-  0
+  0,
+  5 * seconds
 );
 
 const hide = heatingControl(
@@ -40,7 +48,8 @@ const hide = heatingControl(
   "Warm Hide",
   temperatureSensors,
   lcd_display,
-  1
+  1,
+  5 * seconds
 );
 
 const cool = heatingControl(
@@ -50,7 +59,8 @@ const cool = heatingControl(
   "Cool Side",
   temperatureSensors,
   lcd_display,
-  2
+  2,
+  5 * seconds
 );
 
 module.exports = { basking, hide, cool, mister };
