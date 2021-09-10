@@ -7,7 +7,7 @@
 
 <h2  > Description </h2>
 
-<p/>This is project is a Raspberry Pi controlled eco system. It monitors the temperatures inside the Vivarium creating a temperature gradient throughout. This helps to provide Sunny a warm place to hide, a cool place to hide as well as a basking spot that will roast like the sun.
+<p>This is project is a Raspberry Pi controlled eco system. It monitors the temperatures inside the Vivarium creating a temperature gradient throughout. This helps to provide Sunny a warm place to hide, a cool place to hide as well as a basking spot that will roast like the sun.
 </p>
 <img alt="" src="./documentation/photos/sunny.jpg" />
 
@@ -40,10 +40,8 @@ Currently utilizing 3 of an available 6 connected relays recycled from a previou
 
 <h3> Humidity </h3>
 
-Humidity sensing is prototyped and available as a simple integer, but not connected or implemented. See src/sht30.js. Most likely to be implimented using a sonic humidifier running off a similar function to "src/control_modules/onOff_vivariumHeating.js"
+Humidity is tracked via a single SHT-31 i2c sensor. It can be raised by running a sonic mister which also creates a lovely spooky effect.
 
-<h2> Software </h2>
+<h3> Software </h3>
 
-This is should be run as a PM2 instance to run at all times.
-
-Currently building
+Currently the enclosure features a web dashboard for control and adjustment. Alexa has also been integrated via get requests from a local <a href="https://www.hubitat.com">hubitat</a>. Ideally this will be refactored into an alexa skill. Currently Alexa is able to make the enclosure spooky by turning on the sonic mister and turning it to night mode. Once refactored into an alexa skill, it will include the ability to switch between day and night, get the currrent enviromental conditions, provide voice reminders for when its time to feed sunny and much more.
