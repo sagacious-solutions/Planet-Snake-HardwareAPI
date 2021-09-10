@@ -33,9 +33,9 @@ let isSpooky = false;
 
 app.get("/current", cors(), (req, res) => {
   const currentReadings = {
-    baskingCurrent: basking.currentTemp,
-    hideCurrent: hide.currentTemp,
-    coolCurrent: cool.currentTemp,
+    baskingCurrent: basking.objectValue.currentTemp,
+    hideCurrent: hide.objectValue.currentTemp,
+    coolCurrent: cool.objectValue.currentTemp,
     humidityCurrent: mister.objectValue.currentHumidity,
     isSpooky: isSpooky,
   };
@@ -66,8 +66,8 @@ app.put("/targetconfig", cors(), (req, res) => {
 // });
 
 const unspookify = () => {
-  // mister.toggleHumidity();
-  // toggleDayNight();
+  mister.toggleHumidity();
+  toggleDayNight();
   isSpooky = false;
 };
 
@@ -78,9 +78,9 @@ app.get("/toggledaynight", cors(), (req, res) => {
 app.get("/spookymode", cors(), (req, res) => {
   console.log("spookymode Ran command from server");
   isSpooky = true;
-  // toggleDayNight();
-  // mister.toggleHumidity();
-  setTimeout(unspookify, 10 * seconds);
+  toggleDayNight();
+  mister.toggleHumidity();
+  setTimeout(unspookify, 120 * seconds);
 
   res.status(200).send();
 

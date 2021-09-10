@@ -35,7 +35,7 @@ module.exports = (
   let timeOn = null;
   let timeOff = null;
   let swing = 0;
-  let currentTemp = 0;
+  let objectValue = { currentTemp: 0 };
 
   const initialize = () => {
     if (socketInput) {
@@ -60,17 +60,20 @@ module.exports = (
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const displayToLcd = () => {
     if (socketInput) {
-      lcd_display.writeLine(lcd_line, `${zone} ${currentTemp}c/${targetTemp}c`);
+      lcd_display.writeLine(
+        lcd_line,
+        `${zone} ${objectValue.currentTemp}c/${targetTemp}c`
+      );
       return;
     }
 
-    lcd_display.writeLine(lcd_line, `${zone} is ${currentTemp}c`);
+    lcd_display.writeLine(lcd_line, `${zone} is ${objectValue.currentTemp}c`);
   };
 
   // turns the sockets on or off
   const setHeating = () => {
     for (let thisSocket of pwrBarSocket) {
-      if (currentTemp < targetTemp) {
+      if (objectValue.currentTemp < targetTemp) {
         thisSocket.writeSync(ON);
         console.log(`${zone} Turned on`);
         timeOn = Date.now();
@@ -79,7 +82,7 @@ module.exports = (
     }
 
     for (let thisSocket of pwrBarSocket) {
-      if (currentTemp > targetTemp) {
+      if (objectValue.currentTemp > targetTemp) {
         thisSocket.writeSync(OFF);
         console.log(`${zone} Turned off`);
         timeOff = Date.now();
@@ -96,7 +99,7 @@ module.exports = (
 
     for (let temp of temperatureSensors.getLastRead().temps) {
       if (temp.id === sensor) {
-        currentTemp = temp.t;
+        objectValue.currentTemp = temp.t;
 
         displayToLcd();
       }
@@ -107,7 +110,7 @@ module.exports = (
       setHeating();
     }
 
-    console.log(`It's currently ${currentTemp} in ${zone}`);
+    console.log(`It's currently ${objectValue.currentTemp} in ${zone}`);
   };
 
   ////////////////////////////////////////////////////////////
@@ -118,8 +121,8 @@ module.exports = (
   setInterval(moduleLoop, heatChangeInterval);
 
   const getTemp = () => {
-    if (currentTemp) {
-      return currentTemp;
+    if (objectValue.currentTemp) {
+      return objectValue.currentTemp;
     }
 
     return "NO DATA";
@@ -146,12 +149,12 @@ module.exports = (
 
   return {
     getTemp,
-    currentTemp,
     zone,
     targetTemp,
     heating,
     timeOn,
     timeOff,
     setSockets,
+    objectValue,
   };
 };
