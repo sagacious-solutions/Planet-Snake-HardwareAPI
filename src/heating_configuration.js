@@ -10,8 +10,8 @@ const temperatureSensors = ds18b20(60 * 1000, 5);
 
 const sensors = [hideSensor, baskingSensor, coolSide, "28-0000058fc62a"];
 
-const targetHideTemp = 32;
-const targetBaskingTemp = 35;
+const TARGET_HIDE_TEMPERATURE = 32;
+const TARGET_BASKING_TEMP = 35;
 
 const lcd = require("./display/lcd");
 const lcd_add = 0x27;
@@ -33,7 +33,7 @@ const mister = humidityControl(
 const basking = heatingControl(
   [6],
   baskingSensor,
-  targetBaskingTemp,
+  TARGET_BASKING_TEMP,
   "Basking",
   temperatureSensors,
   lcd_display,
@@ -44,7 +44,7 @@ const basking = heatingControl(
 const hide = heatingControl(
   [4, 5],
   hideSensor,
-  targetHideTemp,
+  TARGET_HIDE_TEMPERATURE,
   "Warm Hide",
   temperatureSensors,
   lcd_display,
