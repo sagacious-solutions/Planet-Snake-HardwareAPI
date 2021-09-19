@@ -4,22 +4,14 @@
 /////////////////////////// /////////////////////////// ///////////////////////////
 
 let Gpio = require("onoff").Gpio; //include onoff to interact with the GPIO
-const seconds = 1000;
-const minutes = 60 * seconds;
 
-// 17 22 23 24 27
+const THIRTY_SECONDS_MS = 30000;
 
 // Relays Switch turn on when current sinks
 const ON = 1;
 const OFF = 0;
 
-//******************************************* */
-/// CURRENTLY CODED TO DETERMINE HEATING BY IF A SOCKET WAS PUT IN, NOT OBVIOUSE ON LATER RETURN
-// IF NO SOCKET, IT IS NULL
-
-// FIX
 module.exports = (
-  // STARTING INPUT
   socketInput = null,
   sensor,
   targetTemp = 30,
@@ -27,17 +19,16 @@ module.exports = (
   temperatureSensors,
   lcd_display,
   lcd_line,
-  heatChangeInterval = 30 * seconds
+  heatChangeInterval = THIRTY_SECONDS_MS
 ) => {
-  //////////////// START OF MODULE CODE
-  // Socket pin associations [ 0, 1, 2, 3, 4, 5, 6]
+  // The array index represents a physical power bar socket [ 0, 1, 2, 3, 4, 5, 6]
+  // Below should have the corresponding GPIO pin for the relay controlling that socket
   const physicalSockets = [null, 23, 24, null, 22, 27, 17];
   const pwrBarSocket = [];
   let heating = null;
   let timeOn = null;
   let timeOff = null;
-  let swing = 0;
-  let objectValue = { currentTemp: 0 }; /// THIS IS NOT A GOOD NAME !!!!!!1111oneone
+  let currentTemp = 0;
 
   const initialize = () => {
     if (socketInput) {
@@ -50,31 +41,24 @@ module.exports = (
         console.log(`Sucsesfully initialized socket ${socket} for ${zone}`);
         pwrBarSocket.push(new Gpio(physicalSockets[socket], "out"));
       }
-
       return;
     }
     console.log(`Zone ${zone} is monitored only.`);
   };
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////// WORTKING HERE ON LCD DISPLAY
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const displayToLcd = () => {
     if (socketInput) {
-      lcd_display.writeLine(
-        lcd_line,
-        `${zone} ${objectValue.currentTemp}c/${targetTemp}c`
-      );
+      lcd_display.writeLine(lcd_line, `${zone} ${currentTemp}c/${targetTemp}c`);
       return;
     }
 
-    lcd_display.writeLine(lcd_line, `${zone} is ${objectValue.currentTemp}c`);
+    lcd_display.writeLine(lcd_line, `${zone} is ${currentTemp}c`);
   };
 
   // turns the sockets on or off
   const setHeating = () => {
     for (let thisSocket of pwrBarSocket) {
-      if (objectValue.currentTemp < targetTemp) {
+      if (currentTemp < targetTemp) {
         thisSocket.writeSync(ON);
         console.log(`${zone} Turned on`);
         timeOn = Date.now();
@@ -83,7 +67,7 @@ module.exports = (
     }
 
     for (let thisSocket of pwrBarSocket) {
-      if (objectValue.currentTemp > targetTemp) {
+      if (currentTemp > targetTemp) {
         thisSocket.writeSync(OFF);
         console.log(`${zone} Turned off`);
         timeOff = Date.now();
@@ -98,10 +82,10 @@ module.exports = (
       return;
     }
 
-    // objectValue.currentTemp = temp.t; // RATHER than modify the value, create a new object and return it
+    // currentTemp = temp.t; // RATHER than modify the value, create a new object and return it
     for (let temp of temperatureSensors.getLastRead().temps) {
       if (temp.id === sensor) {
-        objectValue.currentTemp = temp.t;
+        currentTemp = temp.t;
 
         displayToLcd();
       }
@@ -112,7 +96,7 @@ module.exports = (
       setHeating();
     }
 
-    console.log(`It's currently ${objectValue.currentTemp} in ${zone}`);
+    console.log(`It's currently ${currentTemp} in ${zone}`);
   };
 
   ////////////////////////////////////////////////////////////
@@ -123,8 +107,8 @@ module.exports = (
   setInterval(moduleLoop, heatChangeInterval);
 
   const getTemp = () => {
-    if (objectValue.currentTemp) {
-      return objectValue.currentTemp;
+    if (currentTemp) {
+      return currentTemp;
     }
 
     return "NO DATA";
@@ -157,6 +141,5 @@ module.exports = (
     timeOn,
     timeOff,
     setSockets,
-    objectValue,
   };
 };
