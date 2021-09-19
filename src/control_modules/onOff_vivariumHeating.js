@@ -52,7 +52,6 @@ module.exports = (
       return;
     }
     console.log(`Zone ${zone} is monitored only.`);
-    pwrBarSocket = null;
   };
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +105,7 @@ module.exports = (
     }
 
     // if the module has been assigned a socket, run temp control
-    if (pwrBarSocket) {
+    if (pwrBarSocket.length > 0) {
       setHeating();
     }
 
