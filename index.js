@@ -6,16 +6,16 @@ const port = process.env.PORT;
 const cors = require("cors");
 const seconds = 1000;
 
-const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
+const lightingControl = require("./src/control_modules/lighting");
 const { toggleDayNight } = lightingControl();
 const { basking, hide, cool, mister } = require("./src/heating_configuration");
 let isSpooky = false;
 
 app.get("/current", cors(), (_req, res) => {
   const currentReadings = {
-    baskingCurrent: basking.objectValue.currentTemp,
-    hideCurrent: hide.objectValue.currentTemp,
-    coolCurrent: cool.objectValue.currentTemp,
+    baskingCurrent: basking.temperature.current,
+    hideCurrent: hide.temperature.current,
+    coolCurrent: cool.temperature.current,
     humidityCurrent: mister.objectValue.currentHumidity,
     isSpooky: isSpooky,
   };
