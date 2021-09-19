@@ -16,6 +16,8 @@ const OFF = 0;
 //******************************************* */
 /// CURRENTLY CODED TO DETERMINE HEATING BY IF A SOCKET WAS PUT IN, NOT OBVIOUSE ON LATER RETURN
 // IF NO SOCKET, IT IS NULL
+
+// FIX
 module.exports = (
   // STARTING INPUT
   socketInput = null,
@@ -30,12 +32,12 @@ module.exports = (
   //////////////// START OF MODULE CODE
   // Socket pin associations [ 0, 1, 2, 3, 4, 5, 6]
   const physicalSockets = [null, 23, 24, null, 22, 27, 17];
-  let pwrBarSocket = [];
+  const pwrBarSocket = [];
   let heating = null;
   let timeOn = null;
   let timeOff = null;
   let swing = 0;
-  let objectValue = { currentTemp: 0 };
+  let objectValue = { currentTemp: 0 }; /// THIS IS NOT A GOOD NAME !!!!!!1111oneone
 
   const initialize = () => {
     if (socketInput) {
@@ -96,6 +98,7 @@ module.exports = (
       return;
     }
 
+    // objectValue.currentTemp = temp.t; // RATHER than modify the value, create a new object and return it
     for (let temp of temperatureSensors.getLastRead().temps) {
       if (temp.id === sensor) {
         objectValue.currentTemp = temp.t;

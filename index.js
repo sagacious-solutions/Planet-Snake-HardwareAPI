@@ -6,15 +6,7 @@ const port = process.env.PORT;
 const cors = require("cors");
 const seconds = 1000;
 
-//console.log(process.env.PORT)
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////// LCD DISPLAY DISABLED HERE ////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 ///////////////////// Setup of ds18b20 sensors
-const refreshRate = 10000; // In milliseconds
-const dbSaveInterval = 3; // In minutes
 const lightingControl = require("./src/control_modules/onOff_vivariumLighting");
 const { toggleDayNight } = lightingControl();
 const { basking, hide, cool, mister } = require("./src/heating_configuration");
@@ -31,7 +23,7 @@ let isSpooky = false;
 
 // CHANGE LOGIC TO REDUCE HEATING TO 25c AT NIGHT
 
-app.get("/current", cors(), (req, res) => {
+app.get("/current", cors(), (_req, res) => {
   const currentReadings = {
     baskingCurrent: basking.objectValue.currentTemp,
     hideCurrent: hide.objectValue.currentTemp,
