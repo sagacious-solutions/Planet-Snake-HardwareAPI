@@ -3,7 +3,7 @@
 // IT OFF UNLIKE THE LIGHTS WHERE ITS THE OPPOSITE
 /////////////////////////// /////////////////////////// ///////////////////////////
 
-let Gpio = require("onoff").Gpio; //include onoff to interact with the GPIO
+let Gpio = require("onoff").Gpio;
 
 const THIRTY_SECONDS_MS = 30000;
 
@@ -28,7 +28,7 @@ module.exports = (
   let heating = null;
   let timeOn = null;
   let timeOff = null;
-  let currentTemp = 0;
+  let temperature = { current: 0, target: targetTemp };
 
   const initialize = () => {
     if (socketInput) {
@@ -48,28 +48,29 @@ module.exports = (
 
   const displayToLcd = () => {
     if (socketInput) {
-      lcd_display.writeLine(lcd_line, `${zone} ${currentTemp}c/${targetTemp}c`);
+      lcd_display.writeLine(
+        lcd_line,
+        `${zone} ${temperature.current}c/${temperature.target}c`
+      );
       return;
     }
 
-    lcd_display.writeLine(lcd_line, `${zone} is ${currentTemp}c`);
+    lcd_display.writeLine(lcd_line, `${zone} is ${temperature.current}c`);
   };
 
   // turns the sockets on or off
   const setHeating = () => {
     for (let thisSocket of pwrBarSocket) {
-      if (currentTemp < targetTemp) {
+      if (temperature.current < temperature.target) {
         thisSocket.writeSync(ON);
-        console.log(`${zone} Turned on`);
         timeOn = Date.now();
         heating = true;
       }
     }
 
     for (let thisSocket of pwrBarSocket) {
-      if (currentTemp > targetTemp) {
+      if (temperature.current > temperature.target) {
         thisSocket.writeSync(OFF);
-        console.log(`${zone} Turned off`);
         timeOff = Date.now();
         heating = false;
       }
@@ -78,14 +79,14 @@ module.exports = (
 
   const moduleLoop = () => {
     if (!temperatureSensors.getLastRead()) {
-      console.log("temp reads are not ready yet");
+      console.log("Temperature readings are not ready yet");
       return;
     }
 
-    // currentTemp = temp.t; // RATHER than modify the value, create a new object and return it
+    // temperature.current = temp.t; // RATHER than modify the value, create a new object and return it
     for (let temp of temperatureSensors.getLastRead().temps) {
       if (temp.id === sensor) {
-        currentTemp = temp.t;
+        temperature = { ...temperature, current: temp.t };
 
         displayToLcd();
       }
@@ -95,24 +96,11 @@ module.exports = (
     if (pwrBarSocket.length > 0) {
       setHeating();
     }
-
-    console.log(`It's currently ${currentTemp} in ${zone}`);
   };
 
-  ////////////////////////////////////////////////////////////
-  // Start of heating control loop loop
-  ////////////////////////////////////////////////////////////
   initialize();
   moduleLoop();
   setInterval(moduleLoop, heatChangeInterval);
-
-  const getTemp = () => {
-    if (currentTemp) {
-      return currentTemp;
-    }
-
-    return "NO DATA";
-  };
 
   // Primarily Used for trouble shooting
   const setSockets = (onOff) => {
@@ -125,7 +113,6 @@ module.exports = (
   process.on("SIGINT", (_) => {
     if (pwrBarSocket) {
       for (let thisSocket of pwrBarSocket) {
-        console.log("THIS RAN!!!");
         thisSocket.writeSync(1);
         thisSocket.unexport();
       }
@@ -134,9 +121,8 @@ module.exports = (
   });
 
   return {
-    getTemp,
     zone,
-    targetTemp,
+    temperature,
     heating,
     timeOn,
     timeOff,
