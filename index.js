@@ -27,7 +27,7 @@ app.get("/current", cors(), (_req, res) => {
   res.json(currentReadings);
 });
 
-app.get("/targetconfig", cors(), (req, res) => {
+app.get("/targetconfig", cors(), (_req, res) => {
   const targetConfig = {
     baskingCurrent: basking.targetTemp,
     hideCurrent: hide.targetTemp,
@@ -36,7 +36,7 @@ app.get("/targetconfig", cors(), (req, res) => {
   res.json(targetConfig);
 });
 
-app.put("/targetconfig", cors(), (req, res) => {
+app.put("/targetconfig", cors(), (req, _res) => {
   console.log("Someone is trying to update the target config");
   console.log(req);
 });
@@ -47,11 +47,11 @@ const unspookify = () => {
   isSpooky = false;
 };
 
-app.get("/toggledaynight", cors(), (req, res) => {
+app.get("/toggledaynight", cors(), (_req, res) => {
   console.log("Toggle Day Night triggered by webSite");
   res.status(200).send(toggleDayNight());
 });
-app.get("/spookymode", cors(), (req, res) => {
+app.get("/spookymode", cors(), (_req, res) => {
   console.log("Spooky Mode triggered by Hubitat");
   isSpooky = true;
   toggleDayNight();
