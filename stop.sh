@@ -1,1 +1,1 @@
-pm2 stop index
+pm2 stop "planet-snake-hardware-api"
