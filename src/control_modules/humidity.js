@@ -1,40 +1,28 @@
-/////////////////////////////////////////////////////// ///////////////////////////
-// THIS RELAY IS WIRED DEFAULT ON INCASE OF COMPUTER FAILURE. THAT MEANS DRIVING IT LOW TURNS
-// IT OFF UNLIKE THE LIGHTS WHERE ITS THE OPPOSITE
-/////////////////////////// /////////////////////////// ///////////////////////////
-
-let Gpio = require("onoff").Gpio; //include onoff to interact with the GPIO
+let Gpio = require("onoff").Gpio;
 const seconds = 1000;
 const minutes = 60 * seconds;
-
-// 17 22 23 24 27
 
 // Relays Switch turn on when current sinks
 const ON = 1;
 const OFF = 0;
 
-//******************************************* */
-/// CURRENTLY CODED TO DETERMINE HEATING BY IF A SOCKET WAS PUT IN, NOT OBVIOUSE ON LATER RETURN
-// IF NO SOCKET, IT IS NULL
 module.exports = (
-  // STARTING INPUT
   socketInput = null,
   sensor,
   targetHumidity = 65,
   lcd_display,
   lcd_line,
-  checkHumidityInterval = 30 * seconds,
+  CHECK_HUMIDITY_INTERVAL = 30 * seconds,
   zone = "humidity"
 ) => {
-  //////////////// START OF MODULE CODE
-  // Socket pin associations [ 0, 1, 2, 3, 4, 5, 6]
+  // The array index represents a physical power bar socket [ 0, 1, 2, 3, 4, 5, 6]
+  // Below should have the corresponding GPIO pin for the relay controlling that socket
   const physicalSockets = [null, 23, 24, null, 22, 27, 17];
   let pwrBarSocket = [];
   let misting = null;
   let timeOn = null;
   let timeOff = null;
-  let swing = 0;
-  let objectValue = { currentHumidity: 0 };
+  let humidity = { current: 0, target: targetHumidity };
 
   const initialize = () => {
     if (socketInput) {
@@ -54,9 +42,6 @@ module.exports = (
     pwrBarSocket = null;
   };
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////// WORTKING HERE ON LCD DISPLAY
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const displayToLcd = (data) => {
     lcd_display.writeLine(
       lcd_line,
@@ -64,55 +49,42 @@ module.exports = (
     );
   };
 
-  // turns the sockets on or off
+  // Toggles relays on and off to control humidity in this range
   const setHumidity = () => {
     for (let thisSocket of pwrBarSocket) {
-      if (currentHumidity < targetHumidity) {
+      if (humidity.current < humidity.target) {
         thisSocket.writeSync(ON);
-        console.log(`${zone} Turned on`);
         timeOn = Date.now();
         misting = true;
       }
     }
 
     for (let thisSocket of pwrBarSocket) {
-      if (currentHumidity > targetHumidity) {
+      if (humidity.current > humidity.target) {
         thisSocket.writeSync(OFF);
-        console.log(`${zone} Turned off`);
         timeOff = Date.now();
         misting = false;
       }
     }
   };
 
-  //////////////////////////////////////////////////
-  // Main loop for sensor, currently doesn't control its assigned socket
-  // Just using for data input output until deciding how to do humidity
-  ///////////////////////////////
   const moduleLoop = () => {
-    // if the module has been assigned a socket, run temp control
-
     sensor.readSensorData().then((data) => {
       displayToLcd(data);
-      objectValue.currentHumidity = parseFloat(data.humidity).toPrecision(4);
-      console.log(objectValue.currentHumidity);
+      humidity = {
+        ...humidity,
+        current: parseFloat(data.humidity).toPrecision(4),
+      };
     });
 
-    // currentHumidity = parseFloat(data.humidity).toPrecision(4);
-
-    // if (pwrBarSocket) {
-    //   setHumidity();
-    // }
-
-    // console.log(`Rel / Hum : ${parseFloat(data.humidity).toPrecision(4)}%`);
+    if (pwrBarSocket) {
+      setHumidity();
+    }
   };
 
-  ////////////////////////////////////////////////////////////
-  // Start of humidty control loop
-  ////////////////////////////////////////////////////////////
   initialize();
   moduleLoop();
-  setInterval(moduleLoop, checkHumidityInterval);
+  setInterval(moduleLoop, CHECK_HUMIDITY_INTERVAL);
 
   // Primarily Used for trouble shooting
   const toggleHumidity = (onOff = null) => {
@@ -131,17 +103,15 @@ module.exports = (
     }
   };
 
-  ///// FOR MAPPING PORTS
   process.on("SIGINT", (_) => {
     if (pwrBarSocket) {
       for (let thisSocket of pwrBarSocket) {
-        console.log("THIS RAN!!!");
-        thisSocket.writeSync(1);
+        thisSocket.writeSync(OFF);
         thisSocket.unexport();
       }
     }
     setTimeout(() => process.exit(0), 1000);
   });
 
-  return { toggleHumidity, objectValue };
+  return { toggleHumidity, humidity };
 };
