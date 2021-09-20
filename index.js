@@ -16,11 +16,14 @@ app.get("/current", cors(), (_req, res) => {
     baskingCurrent: basking.temperature.current,
     hideCurrent: hide.temperature.current,
     coolCurrent: cool.temperature.current,
-    humidityCurrent: mister.objectValue.currentHumidity,
+    humidityCurrent: mister.getHumidity().current,
     isSpooky: isSpooky,
   };
 
+  console.log(mister);
+
   console.log("request made for current readings");
+  console.log(currentReadings);
   res.json(currentReadings);
 });
 
