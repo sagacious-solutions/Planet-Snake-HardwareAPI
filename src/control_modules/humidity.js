@@ -71,10 +71,14 @@ module.exports = (
   const moduleLoop = () => {
     sensor.readSensorData().then((data) => {
       displayToLcd(data);
+      console.log("UPDATE HUMIDITY");
+
       humidity = {
         ...humidity,
         current: parseFloat(data.humidity).toPrecision(4),
       };
+
+      console.log(humidity);
     });
 
     if (pwrBarSocket) {
@@ -113,5 +117,9 @@ module.exports = (
     setTimeout(() => process.exit(0), 1000);
   });
 
-  return { toggleHumidity, humidity };
+  const getHumidity = () => {
+    return humidity;
+  };
+
+  return { toggleHumidity, getHumidity };
 };
