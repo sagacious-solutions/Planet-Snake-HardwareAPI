@@ -16,7 +16,7 @@ const lcdDisplay = lcd(LCD_ADDRESS);
 const SECOND_IN_MS = 1000;
 const SENSOR_POLLING_INTERVAL = 60 * SECOND_IN_MS;
 
-const humidityModule = require("./sensors/sht31_sensorControl");
+const humidityModule = require("./sensors/sht31_sensor_control");
 const humiditySensor = humidityModule(60 * SECOND_IN_MS, lcdDisplay, 3);
 
 const TARGET_RELATIVE_HUMIDITY = 65;
