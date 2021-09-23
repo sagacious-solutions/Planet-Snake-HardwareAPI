@@ -82,7 +82,7 @@ module.exports = () => {
 
   // This fetches how long it is to the next even hour EX : 2:00pm or 7:00am
   const TIME_TO_AN_HOUR_MS =
-    (60 - REAL_TIME_CLOCK.time().minutes) * MINUTE_IN_MS;
+    (59 - REAL_TIME_CLOCK.time().minutes) * MINUTE_IN_MS;
 
   // Waits until the next even hour, then sets an interval for
   // once an hour to check if its time to cycle the lights between night and day
