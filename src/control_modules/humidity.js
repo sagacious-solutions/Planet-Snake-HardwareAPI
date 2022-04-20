@@ -70,9 +70,13 @@ module.exports = (
 
   const moduleLoop = () => {
     sensor.readSensorData().then((data) => {
-      displayToLcd(data);
-      console.log("UPDATE HUMIDITY");
-
+      try{
+        displayToLcd(data);
+        console.log("UPDATE HUMIDITY");
+      }catch(err){
+        console.log("Failed to write humidity data to LCD. Please check wiring.")
+        console.log(err)
+      }
       humidity = {
         ...humidity,
         current: parseFloat(data.humidity).toPrecision(4),

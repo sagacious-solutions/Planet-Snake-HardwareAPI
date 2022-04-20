@@ -88,7 +88,13 @@ module.exports = (
       if (temp.id === sensor) {
         temperature = { ...temperature, current: temp.t };
 
-        displayToLcd();
+        try{
+          displayToLcd();
+        }catch(err){
+          console.log("Failed write Temperature to LCD display. Please check the wiring.")
+          console.log(`${zone} is ${temperature.current}c`)
+          console.log(err)
+        }
       }
     }
 

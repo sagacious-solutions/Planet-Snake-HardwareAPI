@@ -5,7 +5,7 @@
   "author": "Matt Macdonald",
   "main": "index.js",
   "engines": {
-    "node": "10.24.1",
+    "node": "16.14.0",
     "npm": ">=5.6.0"
   },
   "scripts": {
@@ -24,5 +24,8 @@
     "i2c-bus": "^5.2.2",
     "onoff": "6.0.3",
     "raspberrypi-liquid-crystal": "^1.15.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^3.2.7"
   }
 }

@@ -6,10 +6,13 @@ const minutes = 60 * seconds;
 module.exports = (address = 0x27, width = 20, height = 4) => {
   // Instantiate the LCD object on bus 1 address 3f with 16 chars width and 2 lines
   const lcd = new LCD(1, address, width, height);
-
+    
   // Init the lcd (must be done before calling any other methods)
-  lcd.beginSync();
-
+  try{
+    lcd.beginSync();
+  }catch(err){
+    console.log("Unable to initlialize LCD.")
+  }
   const clearLCD = () => {
     lcd.clear();
   };
