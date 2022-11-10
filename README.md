@@ -1,7 +1,9 @@
 <h1> Planet Snake Research Vivarium</h1>
 
-
+<h3>At Project Completion</h3>
 <img alt="" src="./documentation/photos/planet_snake.jpg" />
+<h3>After one year</h3>
+<img alt="" src="./documentation/photos/planet_snake_one_year.jpg" />
 
 <h2  > Description </h2>
 
