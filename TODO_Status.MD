@@ -15,4 +15,4 @@ Ability to control humidity automatically
 **_ User Controls _**
 
 User is able to push a button for graceful shutdown
-When button is pushed, system does a gracefulshutdown
+When button is pushed, system does a graceful shutdown
